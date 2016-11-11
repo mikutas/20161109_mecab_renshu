@@ -35,12 +35,12 @@ int main() {
 		multimap<double, string> term_freq;
 		map<string, int>::iterator it;
 
+		// 文書の読み込み
 		string input_file;
 		string str;
 		cout << "Drop file here and press ENTER." << endl;
 		cin >> input_file;
 		while (input_file != "x") {
-			//cout << input_file << endl;
 			ifstream ifs(input_file);
 			if (ifs.fail()) {
 				cout << "Cannot open file." << endl;
@@ -53,9 +53,12 @@ int main() {
 			cout << "next?" << endl;
 			cin >> input_file;
 		}
+
+		// 形態素解析
 		MeCab::Tagger *tagger = MeCab::createTagger("");
 		const MeCab::Node *node = tagger->parseToNode(str.c_str());
 
+		// 単語出現数とdfのカウント
 		for (node = node->next; node->next; node = node->next) {
 			vector<string> strvec = split(node->feature, ",");
 			total_words++;
@@ -79,19 +82,21 @@ int main() {
 			}
 		}
 		delete tagger;
-
+		
+		// tfの計算
 		for (it = word_count.begin(); it != word_count.end(); it++) {
 			term_freq.insert(pair<double, string>((double)(it->second) / total_words, it->first));
 		}
 		tf_map_vec.push_back(term_freq);
 	}
 
+	// tf-idfの計算
 	vector<multimap<double, string>> tf_idf_vec;
 	for (int i = 0; i < writers; i++) {
 		multimap<double, string> tf_idf;
 		map<double, string>::iterator it;
 		for (it = tf_map_vec.at(i).begin(); it != tf_map_vec.at(i).end(); it++) {
-			double idf = log(writers) / (double)(doc_freq.find(it->second)->second);
+			double idf = log(writers / (double)(doc_freq.find(it->second)->second));
 			double tf_idf_val = (it->first) * idf;
 			tf_idf.insert(pair<double, string>(tf_idf_val, it->second));
 		}
@@ -107,10 +112,10 @@ int main() {
 		multimap<double, string>::reverse_iterator rit;
 		int j = 0;
 		for (rit = tf_idf_vec.at(i).rbegin(); j < min(tf_idf_vec.at(i).size(), display_words); rit++) {
-			cout << rit->second << endl;
+			cout << rit->second << "\t" << rit->first << endl;
 			j++;
 		}
+		cout << endl;
 	}
-
 	return 0;
 }
