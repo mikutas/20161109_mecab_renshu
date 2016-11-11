@@ -19,12 +19,12 @@ vector<string> split(string s, string c) {
 }
 
 int main() {
-	cout << "How many writers?" << endl;
+	cout << "How many authors (or docs)?" << endl;
 	int writers;
 	cin >> writers;
 	cout << "I got it." << endl;
 
-	// 作家ごとのTerm Frequency
+	// 著者または文書ごとのTerm Frequency
 	vector<multimap<double, string>> tf_map_vec;
 	// Document Frequency
 	map<string, int> doc_freq;
@@ -38,7 +38,7 @@ int main() {
 		// 文書の読み込み
 		string input_file;
 		string str;
-		cout << "Drop file here and press ENTER." << endl;
+		cout << "Drop file here and press ENTER. (Author or Doc no." << i+1 << ")" << endl;
 		cin >> input_file;
 		while (input_file != "x") {
 			ifstream ifs(input_file);
@@ -103,12 +103,12 @@ int main() {
 		tf_idf_vec.push_back(tf_idf);
 	}
 
-	// 作家ごとにtf-idfトップいくつかを表示
+	// 著者または文書ごとにtf-idfトップいくつかを表示
 	cout << "How many words?" << endl;
 	int display_words;
 	cin >> display_words;
 	for (int i = 0; i < writers; i++) {
-		cout << "Writer no." << i + 1 << endl;
+		cout << "Author or Doc no." << i + 1 << endl;
 		multimap<double, string>::reverse_iterator rit;
 		int j = 0;
 		for (rit = tf_idf_vec.at(i).rbegin(); j < min(tf_idf_vec.at(i).size(), display_words); rit++) {
