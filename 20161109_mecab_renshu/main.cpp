@@ -63,8 +63,11 @@ int main() {
 			vector<string> strvec = split(node->feature, ",");
 			total_words++;
 			if (strvec[0] == "名詞" /*| strvec[0] == "動詞"*/) {
-				//cout << "counting..." << endl;
 				string noun = strvec[6];
+				// アスタリスクが引っかかる問題の付け焼刃的対策
+				if (strvec[6] == "*") {
+					continue;
+				}
 				it = doc_freq.find(noun);
 				if (it != doc_freq.end()) {
 					if (it->second < i) it->second++;
