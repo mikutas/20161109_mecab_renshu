@@ -43,7 +43,7 @@ int main() {
 			//cout << input_file << endl;
 			ifstream ifs(input_file);
 			if (ifs.fail()) {
-				cout << "ファイル開けない" << endl;
+				cout << "Cannot open file." << endl;
 				exit(1);
 			}
 			char c;
@@ -103,7 +103,7 @@ int main() {
 	int display_words;
 	cin >> display_words;
 	for (int i = 0; i < writers; i++) {
-		cout << i + 1 << "人目" << endl;
+		cout << "Writer no." << i + 1 << endl;
 		multimap<double, string>::reverse_iterator rit;
 		int j = 0;
 		for (rit = tf_idf_vec.at(i).rbegin(); j < min(tf_idf_vec.at(i).size(), display_words); rit++) {
