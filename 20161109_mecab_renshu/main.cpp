@@ -20,8 +20,8 @@ vector<string> split(string s, string c) {
 
 int main() {
 	cout << "How many authors (or docs)?" << endl;
-	int writers;
-	cin >> writers;
+	int authors;
+	cin >> authors;
 	cout << "I got it." << endl;
 
 	// 著者または文書ごとのTerm Frequency
@@ -29,12 +29,12 @@ int main() {
 	// Document Frequency
 	map<string, int> doc_freq;
 
-	for (int i = 0; i < writers; i++) {
+	for (int i = 0; i < authors; i++) {
 		int total_words = 0;
 		map<string, int> word_count;
 		multimap<double, string> term_freq;
 		map<string, int>::iterator it;
-
+		
 		// 文書の読み込み
 		string input_file;
 		string str;
@@ -61,26 +61,28 @@ int main() {
 		// 単語出現数とdfのカウント
 		for (node = node->next; node->next; node = node->next) {
 			vector<string> strvec = split(node->feature, ",");
-			total_words++;
+			//total_words++;
 			if (strvec[0] == "名詞" /*| strvec[0] == "動詞"*/) {
+				total_words++;
 				string noun = strvec[6];
 				// アスタリスクが引っかかる問題の付け焼刃的対策
 				if (strvec[6] == "*") {
 					continue;
-				}
-				it = doc_freq.find(noun);
-				if (it != doc_freq.end()) {
-					if (it->second < i) it->second++;
-				}
-				else {
-					doc_freq.insert(pair<string, int>(noun, 1));
 				}
 				it = word_count.find(noun);
 				if (it != word_count.end()) {
 					it->second += 1;
 				}
 				else {
+					// i+1周目のループで初登場の単語
 					word_count.insert(pair<string, int>(noun, 1));
+					it = doc_freq.find(noun);
+					if (it != doc_freq.end()) {
+						it->second++;
+					}
+					else {
+						doc_freq.insert(pair<string, int>(noun, 1));
+					}
 				}
 			}
 		}
@@ -95,11 +97,11 @@ int main() {
 
 	// tf-idfの計算
 	vector<multimap<double, string>> tf_idf_vec;
-	for (int i = 0; i < writers; i++) {
+	for (int i = 0; i < authors; i++) {
 		multimap<double, string> tf_idf;
 		map<double, string>::iterator it;
 		for (it = tf_map_vec.at(i).begin(); it != tf_map_vec.at(i).end(); it++) {
-			double idf = log(writers / (double)(doc_freq.find(it->second)->second));
+			double idf = log(authors / (double)(doc_freq.find(it->second)->second));
 			double tf_idf_val = (it->first) * idf;
 			tf_idf.insert(pair<double, string>(tf_idf_val, it->second));
 		}
@@ -110,7 +112,7 @@ int main() {
 	cout << "How many words?" << endl;
 	int display_words;
 	cin >> display_words;
-	for (int i = 0; i < writers; i++) {
+	for (int i = 0; i < authors; i++) {
 		cout << "Author or Doc no." << i + 1 << endl;
 		multimap<double, string>::reverse_iterator rit;
 		int j = 0;
